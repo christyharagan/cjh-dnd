@@ -9,6 +9,7 @@ chai.use(sinonChai);
 var sampleData = require('./sampleData');
 
 var overlapTree = require('../../lib/overlapTree');
+var facade = require('cjh-tree').facade;
 
 var c = function (top, bottom, left, right) {
   return {
@@ -17,6 +18,14 @@ var c = function (top, bottom, left, right) {
     left: left,
     right: right
   };
+};
+
+var compareDndOverlap = function(a, b) {
+  expect(a.dndOverlap).to.eql(b.dndOverlap);
+  expect(b.children.length).to.equal(b.children.length);
+  for (var i = 0; i < a.children.length; i++) {
+    compareDndOverlap(a.children[i], b.children[i]);
+  }
 };
 
 var setup = function () {
@@ -30,21 +39,27 @@ describe('overlapTree', function () {
 
       var overlap = overlapTree.createOverlapTree(c(0, 8, 0, 8), $.targets);
 
-      expect(overlap).to.be.a('array').and.has.lengthOf(0);
+      expect(overlap.children).to.be.a('array').and.has.lengthOf(0);
     });
     it('should return all overlapping targets when no selection type specified', function () {
       var $ = setup();
+      $.overlapTree = facade({dndOverlap:{}});
+      $.overlapTree.addNode($.overlap1);
+      $.overlapTree.addNode($.overlap2);
 
       var overlap = overlapTree.createOverlapTree(c(22, 36, 27, 50), $.targets);
 
-      console.log(overlap[0].node.getCoords());
-
-      expect(overlap).to.eql($.overlapTree);
+      compareDndOverlap(overlap, $.overlapTree);
     });
     it('should return the most overlapping target when a selection type is specified', function () {
       var $ = setup();
+      $.overlapTree = facade({dndOverlap:{}});
+      $.overlapTree.addNode($.overlap1);
+      $.overlapTree.addNode($.overlap2);
 
       var overlap = overlapTree.createOverlapTree(c(25, 50, 27, 50), $.targets, null, 'v');
+
+      console.log(overlap);
 
       expect(overlap).to.eql($.selectedOverlapTree);
     });
@@ -63,12 +78,11 @@ describe('overlapTree', function () {
 
       var partitionedOverlapTree = overlapTree.partitionOverlapTree($.overlapTree);
 
-      expect(partitionedOverlapTree).to.be.an('array').and.has.lengthOf(3);
-
-      expect(partitionedOverlapTree[0]).to.be.eql($.overlapTree);
-
-      expect(partitionedOverlapTree[1]).to.be.an('array').and.has.lengthOf(0);
-      expect(partitionedOverlapTree[2]).to.be.an('array').and.has.lengthOf(0);
+      expect(partitionedOverlapTree).to.eql({
+        over: $.overlapTree,
+        out:[],
+        drag:[]
+      });
     });
     it('should correctly partition overlaps when there is a previous overlap tree', function () {
       var $ = setup();

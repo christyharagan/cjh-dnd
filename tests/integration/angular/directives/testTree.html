@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Program Reorder</title>
+
+    <script src="testTree.js"></script>
+
+</head>
+<body ng-app="test">
+<ion-view ng-controller="test">
+    <cjh-tree tree="tree"
+              createTempElement="createTempElement"
+              restoreElement="restoreElement"
+              makeDraggable="makeDraggable"
+              unmakeDraggable="unmakeDraggable"
+              shouldReplace="shouldReplace"
+              clone="true"
+              onSourceDragStart="onSourceDragStart"
+              onSourceDrag="onSourceDrag"
+              onSourceDrop="onSourceDrop"
+              onTargetOver="onTargetOver"
+              onTargetDrag="onTargetDrag"
+              onTargetOut="onTargetOut"
+              onTargetDrop="onTargetDrop"
+              replaceWithTemp="replaceWithTemp">
+        <div>HELLO</div>
+        <div>WORLD</div>
+              </cjh-tree>
+</ion-view>
+</body>
+</html>
